@@ -40,8 +40,25 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
 
   if (!isOpen) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+    
+    // Special handling for System Notifications to request permission
+    if (name === 'enableSystemNotifications' && checked) {
+      if (!('Notification' in window)) {
+        alert("이 브라우저는 데스크탑 알림을 지원하지 않습니다.");
+        return;
+      }
+
+      if (Notification.permission !== 'granted') {
+        const permission = await Notification.requestPermission();
+        if (permission !== 'granted') {
+          alert("알림 권한이 거부되었습니다. 브라우저 설정에서 알림을 허용해주세요.");
+          return; // Do not toggle checkbox
+        }
+      }
+    }
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -66,11 +83,38 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
         <div className="p-6 border-b dark:border-gray-700">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">시스템 설정 (Settings)</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            데이터베이스 및 AI 설정을 관리합니다.
+            데이터베이스, 알림 및 AI 설정을 관리합니다.
           </p>
         </div>
         
         <div className="p-6 overflow-y-auto space-y-6">
+          
+          {/* System Notifications Config */}
+          <div>
+             <div className="flex items-center justify-between">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    데스크탑 시스템 알림
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    창이 최소화되어 있어도 OS 알림을 받습니다.
+                    </p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    name="enableSystemNotifications"
+                    checked={formData.enableSystemNotifications} 
+                    onChange={handleChange}
+                    className="sr-only peer" 
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-600"></div>
+                </label>
+             </div>
+          </div>
+
+          <hr className="dark:border-gray-700"/>
+
           {/* Gemini Config */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -95,7 +139,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
           <div>
              <div className="flex items-center justify-between mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Supabase Database (실시간 동기화)
+                  Supabase Database (실시간)
                 </label>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input 

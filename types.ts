@@ -11,6 +11,7 @@ export interface AppSettings {
   supabaseKey: string;
   geminiApiKey: string;
   useSupabase: boolean;
+  enableSystemNotifications: boolean;
 }
 
 export enum ViewMode {

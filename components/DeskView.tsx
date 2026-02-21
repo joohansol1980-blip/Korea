@@ -34,7 +34,7 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
     setIsProcessing(true);
     try {
       let name = inputText;
-      let treatment = "일반 물리치료";
+      let treatment = "접수/대기"; // Default content if none provided
 
       // Attempt AI parsing if API key exists
       if (geminiApiKey) {
@@ -79,7 +79,7 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
         <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <span className="material-icons-round text-brand-500">edit_note</span>
-              처방 입력 (Desk)
+              메모 입력 (Desk)
             </h2>
             <button 
               type="button" 
@@ -102,7 +102,7 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
               />
               <input
                 type="text"
-                placeholder="처방 내용 (예: 충격파)"
+                placeholder="내용 (예: 4시로 변경)"
                 value={manualTreatment}
                 onChange={(e) => setManualTreatment(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-brand-500 outline-none"
@@ -112,7 +112,7 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
             <div className="relative">
               <input
                 type="text"
-                placeholder="예: 김진표 충격파 (이름과 처방을 띄어쓰기로 입력)"
+                placeholder="예: 김진표 충격파, 이지성 5시 변경 (이름과 내용을 띄어쓰기로 입력)"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 disabled={isProcessing}
@@ -129,9 +129,9 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
           <button
             type="submit"
             disabled={isProcessing || (showManual ? (!manualName || !manualTreatment) : !inputText)}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 disabled:from-gray-300 disabled:to-gray-300 dark:disabled:from-gray-700 dark:disabled:to-gray-700 text-white font-bold text-lg rounded-xl shadow-lg shadow-blue-500/30 transition-all active:scale-[0.98]"
+            className="w-full py-4 bg-blue-400 hover:bg-blue-500 dark:bg-brand-600 dark:hover:bg-brand-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-black dark:text-white font-bold text-lg rounded-xl shadow-lg shadow-blue-400/30 dark:shadow-brand-500/30 transition-all active:scale-[0.98]"
           >
-            {isProcessing ? '처리 중...' : '처방 전달하기'}
+            {isProcessing ? '처리 중...' : '메모 전달하기'}
           </button>
         </form>
       </div>
@@ -142,14 +142,14 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
         <div className="space-y-4">
           <h3 className="font-bold text-gray-600 dark:text-gray-400 uppercase text-sm tracking-wider flex items-center gap-2 px-1">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm"></span>
-            대기 환자 ({waitingPatients.length})
+            대기 환자 / 메모 ({waitingPatients.length})
           </h3>
           {waitingPatients.length === 0 && (
-             <p className="text-gray-400 text-sm italic py-4 px-1">대기 중인 환자가 없습니다.</p>
+             <p className="text-gray-400 text-sm italic py-4 px-1">대기 중인 메모가 없습니다.</p>
           )}
           <div className="space-y-3">
             {waitingPatients.map(p => (
-              <div key={p.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border-2 border-gray-200 dark:border-gray-700 flex justify-between items-center group hover:border-brand-300 dark:hover:border-gray-600 transition-colors">
+              <div key={p.id} className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md border-2 border-gray-300 dark:border-gray-700 flex justify-between items-center group hover:border-brand-400 dark:hover:border-gray-600 transition-colors">
                 <div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white">{p.name}</div>
                   <div className="text-brand-700 dark:text-brand-400 font-medium">{p.treatment}</div>
@@ -158,7 +158,7 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
                   <button 
                     onClick={() => onUpdateStatus(p.id, 'in-progress')}
                     className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 transition-colors border border-blue-100 dark:border-transparent"
-                    title="치료 시작"
+                    title="확인 중으로 이동"
                   >
                     <span className="material-icons-round text-xl">play_arrow</span>
                   </button>
@@ -179,24 +179,33 @@ const DeskView: React.FC<DeskViewProps> = ({ patients, onAddPatient, onUpdateSta
         <div className="space-y-4">
           <h3 className="font-bold text-gray-600 dark:text-gray-400 uppercase text-sm tracking-wider flex items-center gap-2 px-1">
             <span className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-sm"></span>
-            치료 중 ({activePatients.length})
+            메모 확인 ({activePatients.length})
           </h3>
           {activePatients.length === 0 && (
-             <p className="text-gray-400 text-sm italic py-4 px-1">치료 중인 환자가 없습니다.</p>
+             <p className="text-gray-400 text-sm italic py-4 px-1">확인 중인 메모가 없습니다.</p>
           )}
           <div className="space-y-3">
             {activePatients.map(p => (
-              <div key={p.id} className="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl shadow-sm border-2 border-green-200 dark:border-green-900/30 flex justify-between items-center">
+              <div key={p.id} className="bg-green-50 dark:bg-green-900/10 p-4 rounded-xl shadow-sm border-2 border-green-300 dark:border-green-900/30 flex justify-between items-center">
                 <div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white">{p.name}</div>
                   <div className="text-green-700 dark:text-green-400 font-medium">{p.treatment}</div>
                 </div>
-                <button 
-                    onClick={() => onUpdateStatus(p.id, 'done')}
-                    className="px-4 py-2 bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
-                  >
-                    완료
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                      onClick={() => onUpdateStatus(p.id, 'waiting')}
+                      className="p-2 text-amber-600 bg-amber-50 hover:bg-amber-100 dark:text-amber-400 dark:bg-amber-900/20 dark:hover:bg-amber-900/30 rounded-lg transition-colors border border-amber-100 dark:border-transparent"
+                      title="대기로 되돌리기"
+                    >
+                      <span className="material-icons-round text-xl">undo</span>
+                  </button>
+                  <button 
+                      onClick={() => onUpdateStatus(p.id, 'done')}
+                      className="px-4 py-2 bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 rounded-lg text-sm font-bold text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
+                    >
+                      완료
+                  </button>
+                </div>
               </div>
             ))}
           </div>
