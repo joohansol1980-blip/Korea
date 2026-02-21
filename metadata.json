@@ -1,0 +1,5 @@
+{
+  "name": "PhysioFlow Board",
+  "description": "A real-time physical therapy prescription display board. Connects Front Desk and Therapy Room with high-visibility updates.",
+  "requestFramePermissions": []
+}
