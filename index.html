@@ -6,7 +6,7 @@
     <title>PhysioFlow - Therapy Board</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#3b82f6" />
+    <meta name="theme-color" content="#2563eb" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
@@ -19,13 +19,37 @@
           extend: {
             colors: {
               brand: {
-                50: '#eff6ff',
-                100: '#dbeafe',
+                50: '#f0f5ff',
+                100: '#e0ebff',
+                200: '#c2d6ff',
+                300: '#94b8ff',
+                400: '#5b93ff',
                 500: '#3b82f6',
                 600: '#2563eb',
                 700: '#1d4ed8',
+                800: '#1e40af',
                 900: '#1e3a8a',
+                950: '#172554',
               }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.2s ease-out',
+              'slide-up': 'slideUp 0.25s ease-out',
+              'slide-down': 'slideDown 0.2s ease-out',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(8px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideDown: {
+                '0%': { opacity: '0', transform: 'translateY(-8px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
             }
           }
         }
@@ -51,6 +75,10 @@
           -ms-overflow-style: none;  /* IE and Edge */
           scrollbar-width: none;  /* Firefox */
       }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
+      .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
     </style>
 </head>
   <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200">

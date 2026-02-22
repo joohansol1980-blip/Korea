@@ -31,8 +31,8 @@ export const useSettings = () => {
       setSettings(DEFAULT_SETTINGS);
     }
 
-    // Load Theme
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    // Load Theme (default: light mode)
+    if (localStorage.theme === 'dark') {
       setIsDarkMode(true);
       document.documentElement.classList.add('dark');
     } else {

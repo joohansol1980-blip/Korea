@@ -1,24 +1,28 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import { AppSettings } from '../types';
 
-// Simple "Ding" sound in Base64
-const CHIME_SOUND = "data:audio/mp3;base64,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";
-
 export const useNotifications = (settings: AppSettings) => {
-  const [notification, setNotification] = useState<{ message: string; type: 'info' | 'success' | 'alert'; isVisible: boolean }>({
-    message: '',
-    type: 'info',
-    isVisible: false,
-  });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [badgeCount, setBadgeCount] = useState(0);
-  
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Initialize Audio
-    audioRef.current = new Audio(CHIME_SOUND);
-    audioRef.current.volume = 0.5;
+    // Request notification permission on mount
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    // Initialize Audio (simple beep)
+    try {
+      const audioCtx = new AudioContext();
+      const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.3, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < buffer.length; i++) {
+        data[i] = Math.sin(2 * Math.PI * 880 * (i / audioCtx.sampleRate)) * Math.exp(-3 * i / buffer.length);
+      }
+      audioRef.current = { audioCtx, buffer } as any;
+    } catch (e) {
+      console.warn("Audio init failed", e);
+    }
 
     // Clear badge on focus
     const handleVisibilityChange = () => {
@@ -38,49 +42,58 @@ export const useNotifications = (settings: AppSettings) => {
     };
   }, []);
 
-  const triggerNotification = useCallback((message: string, type: 'info' | 'success' | 'alert' = 'info') => {
-    // 1. In-App Toast
-    setNotification({ message, type, isVisible: true });
-    
-    // 2. Sound
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(e => console.warn("Audio play blocked", e));
+  const playSound = useCallback(() => {
+    try {
+      const ref = audioRef.current as any;
+      if (ref?.audioCtx && ref?.buffer) {
+        const source = ref.audioCtx.createBufferSource();
+        source.buffer = ref.buffer;
+        source.connect(ref.audioCtx.destination);
+        source.start();
+      }
+    } catch (e) {
+      console.warn("Audio play failed", e);
     }
+  }, []);
 
-    // 3. System Desktop Notification (Even if minimized)
-    if (settings.enableSystemNotifications && 'Notification' in window && Notification.permission === 'granted') {
-      try {
-         // Create system notification
-         new Notification("PhysioFlow 메모 알림", {
-           body: message,
-           icon: '/vite.svg', 
-           tag: 'physioflow-update', 
-           silent: true // We play our own sound via Audio API
-         });
-      } catch (e) {
-        console.error("System notification failed", e);
+  const triggerNotification = useCallback((message: string, _type: 'info' | 'success' | 'alert' = 'info') => {
+    // Only show system notification when window is hidden (minimized/background tab)
+    if (document.visibilityState === 'hidden') {
+      // 1. Sound
+      playSound();
+
+      // 2. System Desktop Notification (stays until user clicks)
+      if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+          const notification = new Notification("PhysioFlow 메모 알림", {
+            body: message,
+            icon: '/vite.svg',
+            requireInteraction: true, // Stays until user clicks
+            silent: false,
+          });
+
+          // Click notification → focus the app window
+          notification.onclick = () => {
+            window.focus();
+            notification.close();
+          };
+        } catch (e) {
+          console.error("System notification failed", e);
+        }
+      }
+
+      // 3. Update App Badge
+      if ('setAppBadge' in navigator) {
+        setBadgeCount(prev => {
+          const newCount = prev + 1;
+          (navigator as any).setAppBadge(newCount).catch((e: any) => console.log("Badge error", e));
+          return newCount;
+        });
       }
     }
-
-    // 4. Update App Badge (Menu bar / Taskbar count)
-    if (document.visibilityState === 'hidden' && 'setAppBadge' in navigator) {
-      setBadgeCount(prev => {
-        const newCount = prev + 1;
-        (navigator as any).setAppBadge(newCount).catch((e: any) => console.log("Badge error", e));
-        return newCount;
-      });
-    }
-
-  }, [settings.enableSystemNotifications]);
-
-  const closeNotification = () => {
-    setNotification(prev => ({ ...prev, isVisible: false }));
-  };
+  }, [playSound]);
 
   return {
-    notification,
-    triggerNotification,
-    closeNotification
+    triggerNotification
   };
 };

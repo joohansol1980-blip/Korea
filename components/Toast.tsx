@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 interface ToastProps {
   message: string;
@@ -8,18 +8,9 @@ interface ToastProps {
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type = 'info', isVisible, onClose }) => {
-  useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 3000); // 3 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, onClose]);
-
   if (!isVisible) return null;
 
-  let bgColor = 'bg-gray-800 dark:bg-white';
+  let bgColor = 'bg-gray-800 dark:bg-gray-100';
   let textColor = 'text-white dark:text-gray-900';
   let icon = 'notifications_active';
 
@@ -34,10 +25,16 @@ const Toast: React.FC<ToastProps> = ({ message, type = 'info', isVisible, onClos
   }
 
   return (
-    <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 animate-bounce-in">
-      <div className={`${bgColor} ${textColor} px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 min-w-[300px] justify-center transition-all duration-300`}>
-        <span className="material-icons-round text-xl">{icon}</span>
-        <span className="font-bold text-lg">{message}</span>
+    <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-50 animate-slide-down">
+      <div className={`${bgColor} ${textColor} px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2.5 min-w-[240px] justify-center transition-all duration-200`}>
+        <span className="material-icons-round text-lg">{icon}</span>
+        <span className="font-medium text-sm">{message}</span>
+        <button
+          onClick={onClose}
+          className="ml-1.5 px-2.5 py-0.5 bg-white/20 hover:bg-white/30 rounded-md text-xs font-medium transition-colors"
+        >
+          확인
+        </button>
       </div>
     </div>
   );

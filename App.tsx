@@ -3,7 +3,6 @@ import { ViewMode } from './types';
 import DeskView from './components/DeskView';
 import BoardView from './components/BoardView';
 import SettingsModal from './components/SettingsModal';
-import Toast from './components/Toast';
 
 // Custom Hooks
 import { useSettings } from './hooks/useSettings';
@@ -24,10 +23,8 @@ function App() {
   } = useSettings();
 
   // Hook: Notifications (Needs settings for permission check)
-  const { 
-    notification, 
-    triggerNotification, 
-    closeNotification 
+  const {
+    triggerNotification
   } = useNotifications(settings);
 
   // Hook: Patients Logic (Needs settings and notifier)
@@ -41,19 +38,11 @@ function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Toast Notification */}
-      <Toast 
-        message={notification.message} 
-        type={notification.type} 
-        isVisible={notification.isVisible} 
-        onClose={closeNotification} 
-      />
-
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-md z-40 sticky top-0 transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-             <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-brand-500/50 shadow-lg">P</div>
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700/50 z-40 sticky top-0 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+             <div className="w-7 h-7 bg-brand-600 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-sm">P</div>
              <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white hidden sm:block">PhysioFlow</h1>
           </div>
 
@@ -62,13 +51,13 @@ function App() {
              <div className="bg-gray-100 dark:bg-gray-700 p-1 rounded-lg flex">
                 <button
                   onClick={() => setViewMode(ViewMode.DESK)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-all ${viewMode === ViewMode.DESK ? 'bg-white dark:bg-gray-600 text-brand-600 dark:text-brand-300 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'}`}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === ViewMode.DESK ? 'bg-white dark:bg-gray-600 text-brand-600 dark:text-brand-300 shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'}`}
                 >
                   입력 (Desk)
                 </button>
                 <button
                   onClick={() => setViewMode(ViewMode.BOARD)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-semibold transition-all ${viewMode === ViewMode.BOARD ? 'bg-white dark:bg-gray-600 text-brand-600 dark:text-brand-300 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'}`}
+                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === ViewMode.BOARD ? 'bg-white dark:bg-gray-600 text-brand-600 dark:text-brand-300 shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900'}`}
                 >
                   현황판 (Board)
                 </button>
@@ -106,15 +95,9 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col relative overflow-hidden">
-        {/* Background Accents */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-           <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-brand-500/5 rounded-full blur-3xl"></div>
-           <div className="absolute top-[20%] -right-[10%] w-[30%] h-[30%] bg-purple-500/5 rounded-full blur-3xl"></div>
-        </div>
-
+      <main className="flex-1 flex flex-col overflow-hidden">
         {viewMode === ViewMode.DESK ? (
-          <div className="pt-8">
+          <div className="pt-6">
             <DeskView 
               patients={patients} 
               onAddPatient={addPatient} 
